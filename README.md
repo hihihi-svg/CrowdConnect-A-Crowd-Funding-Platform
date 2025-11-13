@@ -1,4 +1,4 @@
-# CrowdConnect 3.0 - Crowdfunding Platform (MongoDB Edition)
+# CrowdConnect - Crowdfunding Platform
 
 A modern, full-featured crowdfunding platform built with vanilla JavaScript, MongoDB, and Express.js backend.
 
@@ -7,17 +7,21 @@ A modern, full-featured crowdfunding platform built with vanilla JavaScript, Mon
 ```
 crowdconnect 3.0/
 ├── index.html          # Main HTML file with all views
-├── config.js          # API configuration
-├── database.js        # MongoDB API client
-├── api.js             # API utilities for summarization
-├── auth.js            # MongoDB API Authentication handler
-├── app.js             # Main application logic
-├── styles.css         # Custom CSS styles and animations
-├── server.js          # Express.js backend server
-├── package.json       # Node.js dependencies
-├── .env.example       # Environment variables template
-├── MONGODB_SETUP.md   # MongoDB setup instructions
-└── README.md          # This file
+├── config.js           # API configuration (uses relative /api by default)
+├── database.js         # Client-side API client
+├── api.js              # Optional summarization utilities (Hugging Face fallback)
+├── auth.js             # Frontend auth helper that talks to backend
+├── app.js              # Main application logic
+├── styles.css          # Custom CSS styles and animations
+├── server.js           # Express.js backend server (serves API and static files)
+├── package.json        # Node.js dependencies and scripts
+├── scripts/            # Seed utilities (npm run seed)
+├── data/               # Seed data (projects.seed.json)
+├── MONGODB_SETUP.md    # MongoDB setup instructions
+├── QUICK_START.md      # Quick start and common fixes
+├── SETUP.md            # Setup summary
+├── TROUBLESHOOTING.md  # Troubleshooting tips
+└── README.md           # This file
 ```
 
 ## 🚀 Features
@@ -93,12 +97,7 @@ Choose one option:
 
 ### 3. Configure Environment
 
-1. Copy `.env.example` to `.env`:
-```bash
-cp .env.example .env
-```
-
-2. Update `.env` with your settings:
+Create a `.env` file in the project root with at least:
 ```env
 MONGODB_URI=mongodb://localhost:27017/crowdconnect
 PORT=3000
@@ -117,17 +116,32 @@ Server will run on `http://localhost:3000`
 
 ### 5. Configure Frontend
 
-Update `config.js` if your backend is on a different port:
+By default, `config.js` uses a relative path so the frontend and backend can run on the same origin without CORS changes. Update only if your backend runs on a different host/port:
 ```javascript
 const API_CONFIG = {
-  API_BASE_URL: "http://localhost:3000/api",
-  // ...
+  // Served from same origin by default
+  getApiBaseUrl: () => '/api',
 };
 ```
 
 ### 6. Open Frontend
 
 Simply open `index.html` in your web browser!
+
+### 7. (Optional) Seed Sample Data
+
+With the server running in a separate terminal, seed demo projects through the public API:
+```bash
+npm run seed
+```
+Environment overrides (optional):
+```env
+# used by scripts/seed.js
+API_BASE=http://localhost:3000/api
+SEED_NAME=Seed User
+SEED_EMAIL=seed@example.com
+SEED_PASSWORD=SeedPass123!
+```
 
 ## 📡 API Endpoints
 
@@ -141,11 +155,19 @@ Simply open `index.html` in your web browser!
 - `GET /api/projects/:id` - Get single project
 - `POST /api/projects` - Create project (requires auth)
 - `GET /api/projects/user/:userId` - Get user's projects
+- `PUT /api/projects/:id` - Update project (requires auth)
 
 ### Contributions
 - `POST /api/contributions` - Create contribution (requires auth)
 - `GET /api/contributions/project/:projectId` - Get project contributions
 - `GET /api/contributions/user/:userId` - Get user contributions
+
+### Leaderboards
+- `GET /api/leaderboard/contributions?limit=10` - Top contributors by count and total amount
+- `GET /api/leaderboard/publishes?limit=10` - Top publishers by number of projects
+
+### Health
+- `GET /api/health` - API health check
 
 ## 🗄️ Database Schema
 
