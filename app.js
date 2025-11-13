@@ -525,11 +525,20 @@ class CrowdConnectApp {
     if (nameEl) nameEl.textContent = this.currentUser.displayName || 'User';
     if (emailEl) emailEl.textContent = this.currentUser.email || '';
     
-    // Load user projects
+    // Load user projects and funds raised
     if (this.currentUser && this.currentUser.uid) {
       db.getUserProjects(this.currentUser.uid).then(projects => {
         const countEl = document.getElementById('profile-projects-count');
         if (countEl) countEl.textContent = projects.length;
+        const totalRaised = projects.reduce((sum, p) => sum + (p.raised || 0), 0);
+        const fundsEl = document.getElementById('profile-funds-raised');
+        if (fundsEl) fundsEl.textContent = `Rs ${totalRaised.toLocaleString()}`;
+      });
+
+      // Load user contributions
+      db.getUserContributions(this.currentUser.uid).then(contribs => {
+        const contribsCountEl = document.getElementById('profile-contribs-count');
+        if (contribsCountEl) contribsCountEl.textContent = contribs.length;
       });
     }
   }
