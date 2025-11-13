@@ -43,7 +43,7 @@
 
 			<div class="grid md:grid-cols-3 gap-8 mt-20">
 				<div class="card bg-gray-900 p-6 rounded-lg border border-gray-800 text-center">
-					<div class="text-4xl mb-4">🚀</div>
+					<div class="text-4xl mb-4">✨</div>
 					<h3 class="text-xl font-bold mb-2 text-purple-400">Launch Projects</h3>
 					<p class="text-gray-400">Share your innovative ideas with the world</p>
 				</div>
@@ -94,12 +94,7 @@
 					Login
 				</button>
 			</div>
-			<div class="mt-4">
-				<button id="btn-google"
-					class="w-full bg-gray-800 hover:bg-gray-700 text-white py-3 rounded font-semibold transition-all border border-gray-700">
-					Continue with Google
-				</button>
-			</div>
+			<!-- Google authentication removed -->
 			<button id="btn-back-home"
 				class="w-full mt-4 text-gray-400 hover:text-purple-400 transition-colors">
 				← Back to Home
@@ -108,7 +103,7 @@
 	</div>
 
 	<!-- APP SHELL (visible when logged in) -->
-	<div id="app-shell" class="hidden theme-transition min-h-screen">
+	<div id="app-shell" class="hidden theme-transition min-h-screen" style="display:none">
 		<!-- Navbar -->
 		<nav class="card bg-gray-900 border-b border-gray-800 sticky top-0 z-50">
 			<div class="container mx-auto px-4 py-4">
@@ -199,7 +194,7 @@
 				<div class="grid md:grid-cols-3 gap-6">
 					<div class="card bg-gray-900 p-6 rounded-lg border border-gray-800">
 						<span data-lucide="trending-up" class="text-purple-400 mb-2 block" width="32" height="32"></span>
-						<h3 class="text-2xl font-bold" data-stat="total-raised">$0</h3>
+						<h3 class="text-2xl font-bold" data-stat="total-raised">Rs 0</h3>
 						<p class="text-gray-400">Total Funds Raised</p>
 					</div>
 					<div class="card bg-gray-900 p-6 rounded-lg border border-gray-800">
@@ -260,7 +255,7 @@
 											class="w-full px-4 py-3 rounded bg-gray-800 border border-gray-700 focus:border-purple-500 focus:outline-none"></textarea>
 									</div>
 									<div>
-										<label class="block text-sm font-semibold mb-2">Target Fund Amount ($) *</label>
+										<label class="block text-sm font-semibold mb-2">Target Fund Amount (Rs) *</label>
 										<input id="publish-target" type="number" placeholder="How much funding do you need?"
 											class="w-full px-4 py-3 rounded bg-gray-800 border border-gray-700 focus:border-purple-500 focus:outline-none" />
 									</div>
@@ -344,8 +339,8 @@
 							<h4 id="profile-projects-count" class="text-3xl font-bold text-purple-400">0</h4>
 							<p class="text-gray-400">Projects Created</p>
 						</div>
-						<div class="card bg-gray-900 p-6 rounded-lg border border-gray-800 text-center">
-							<h4 class="text-3xl font-bold text-purple-400">$0</h4>
+						<div class="card bg-gray-900 p-6 rounded-lg border border-gray-800">
+							<h4 class="text-3xl font-bold text-purple-400">Rs 0</h4>
 							<p class="text-gray-400">Funds Raised</p>
 						</div>
 						<div class="card bg-gray-900 p-6 rounded-lg border border-gray-800 text-center">
@@ -367,6 +362,34 @@
 	<script src="database.js"></script>
 	<script src="api.js"></script>
 	<script src="auth.js"></script>
+	<!-- Prevent app shell flash before auth state is known -->
+	<script>
+		(function(){
+			var init = function(){
+				var token = null;
+				try { token = localStorage.getItem('authToken'); } catch(_) {}
+				var shell = document.getElementById('app-shell');
+				var hero = document.getElementById('view-hero');
+				var auth = document.getElementById('view-auth');
+				if (token) {
+					// Logged in: show app shell immediately, hide hero/auth
+					if (hero) hero.classList.add('hidden');
+					if (auth) auth.classList.add('hidden');
+					if (shell) { shell.classList.remove('hidden'); shell.style.display = ''; }
+				} else {
+					// Not logged in: show hero, hide app shell and auth by default
+					if (shell) { shell.classList.add('hidden'); shell.style.display = 'none'; }
+					if (auth) auth.classList.add('hidden');
+					if (hero) hero.classList.remove('hidden');
+				}
+			};
+			if (document.readyState === 'loading') {
+				document.addEventListener('DOMContentLoaded', init);
+			} else {
+				init();
+			}
+		})();
+	</script>
 	<script src="app.js"></script>
 </body>
 </html>

@@ -29,6 +29,8 @@ const connectDB = async () => {
       serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
     });
     
+    
+    
     console.log('✅ Connected to MongoDB successfully!');
     console.log('📊 Database:', mongoose.connection.name);
     
@@ -67,7 +69,7 @@ connectDB();
 const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
+  password: { type: String, required: false },
   createdAt: { type: Date, default: Date.now }
 });
 
@@ -149,8 +151,8 @@ function generateProjectEmoji({ title = '', description = '', motivation = '', p
   for (const [regex, emoji] of rules) {
     if (regex.test(text)) return emoji;
   }
-  // Fallbacks based on tone
-  if (/\b(launch|start|new|innov|build|create)\b/.test(text)) return '🚀';
+  // Fallback based on tone
+  if (/\b(launch|start|new|innov|build|create)\b/.test(text)) return '✨';
   return '✨';
 }
 
@@ -172,6 +174,8 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key-change-in-producti
 if (!JWT_SECRET || JWT_SECRET === 'your-secret-key-change-in-production') {
   console.warn('⚠️  WARNING: Using default JWT_SECRET. Change this in production!');
 }
+
+// Google authentication removed
 
 // Authentication Middleware
 const authenticateToken = (req, res, next) => {
@@ -267,6 +271,8 @@ app.post('/api/auth/register', async (req, res) => {
     });
   }
 });
+
+// Google authentication route removed
 
 // Login
 app.post('/api/auth/login', async (req, res) => {
@@ -542,9 +548,18 @@ app.get('/api/health', (req, res) => {
 // Serve static files (HTML, CSS, JS) - must be after API routes
 app.use(express.static(path.join(__dirname)));
 
-// Root route - serve index.html (must be last, after static files)
+// Split-page routes
+app.get('/login', (req, res) => {
+  res.sendFile(path.join(__dirname, 'login.html'));
+});
+
+app.get('/dashboard', (req, res) => {
+  res.sendFile(path.join(__dirname, 'dashboard.html'));
+});
+
+// Root -> redirect to login by default
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'index.html'));
+  res.redirect('/login');
 });
 
 // Start server
