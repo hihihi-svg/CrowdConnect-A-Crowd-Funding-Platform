@@ -1,317 +1,298 @@
-# CrowdConnect 3.0 - Crowdfunding Platform (MongoDB Edition)
+CrowdConnect – Crowdfunding Platform
 
-A modern, full-featured crowdfunding platform built with vanilla JavaScript, MongoDB, and Express.js backend.
+CrowdConnect is a full-featured crowdfunding platform built using vanilla JavaScript, Node.js + Express, and MongoDB.
+It includes user authentication, project publishing, fundraising, contributions, dashboards, and leaderboards.
 
-## 📁 File Structure
+1. Project Structure
+crowdconnect/
+├── login.html
+├── dashboard.html
+├── config.js
+├── database.js
+├── api.js
+├── auth.js
+├── app.js
+├── styles.css
+├── server.js
+├── package.json
+├── scripts/
+│   └── seed.js
+├── data/
+│   └── projects.seed.json
+└── README.md
 
-```
-crowdconnect 3.0/
-├── login.html          # Public login/hero page (no navbar/app shell)
-├── dashboard.html      # Authenticated app shell (navbar + in-app views)
-├── index.html          # Legacy combined page (root now redirects to /login)
-├── config.js           # API configuration (uses relative /api by default)
-├── database.js         # Client-side API client
-├── api.js              # Optional summarization utilities (Hugging Face fallback)
-├── auth.js             # Frontend auth helper that talks to backend
-├── app.js              # Main application logic
-├── styles.css          # Custom CSS styles and animations
-├── server.js           # Express.js backend server (serves API and static files)
-├── package.json        # Node.js dependencies and scripts
-├── scripts/            # Seed utilities (npm run seed)
-├── data/               # Seed data (projects.seed.json)
-├── MONGODB_SETUP.md    # MongoDB setup instructions
-├── QUICK_START.md      # Quick start and common fixes
-├── SETUP.md            # Setup summary
-├── TROUBLESHOOTING.md  # Troubleshooting tips
-└── README.md           # This file
-```
+2. Features
+Authentication
 
-## 🚀 Features
+Login/Signup with MongoDB
 
-### 1. Authentication
-- **Login/Signup Page** with MongoDB backend
-- Email/Password authentication
-- JWT token-based session management
-- Secure password hashing with bcrypt
+Secure password hashing (bcrypt)
 
-### 2. Dashboard
-- **Home Section**: Welcome message and quick stats
-- **About Section**: Platform information
-- **Mission Section**: Platform mission and values
-- **Action Buttons**: Quick access to Publish or Donate
-- **Stats Display**: Total funds raised, active projects, community members
-- **Featured Projects**: Showcase of top projects
+JWT-based authentication
 
-### 3. Project Publishing
-- Comprehensive form with all required fields:
-  - Project Title
-  - Project Description
-  - Target Fund Amount
-  - Motivation
-  - Problem Statement
-  - Solution & Approach
-  - Project Thesis (optional)
-- **Other Projects Sidebar**: Learn from existing projects
-- **Success Screen**: Animated balloons celebration
-- Data stored in MongoDB
+Automatic session handling
 
-### 4. Donate Page
-- **Project Listing**: All available projects
-- **API Summarization**: Automatic project summaries
-- **Contribution Flow**:
-  1. Click "Contribute Now"
-  2. Enter contribution amount
-  3. Success screen with confirmation
-  4. Return to home
+Dashboard
 
-### 5. Additional Features
-- Dark/Light theme toggle
-- Responsive design
-- Smooth animations
-- Project progress tracking
-- User profile page
+User dashboard with stats
 
-## 🛠️ Setup Instructions
+About and mission sections
 
-### Prerequisites
-- Node.js (v14 or higher)
-- MongoDB (local or Atlas cloud)
-- npm or yarn
+Publish and donate quick-access buttons
 
-### 1. Install Dependencies
+Featured projects
 
-```bash
+User profile and analytics
+
+Project Publishing
+
+Detailed project creation form
+
+Fields include: title, description, target funds, motivation, problem statement, solution, thesis
+
+Projects saved in MongoDB
+
+Celebration screen after successful publishing
+
+Donations
+
+View all available projects
+
+Automatic project summary generation
+
+Contribution workflow:
+
+Open project
+
+Enter donation amount
+
+Confirm
+
+Success screen
+
+Additional
+
+Dark/Light mode
+
+Responsive UI
+
+Smooth animations
+
+Project progress tracking
+
+Leaderboards
+
+Profile metrics (funds raised, contributions made)
+
+3. Setup Instructions
+Prerequisites
+
+Node.js (v14+)
+
+MongoDB (local or Atlas)
+
+npm or yarn
+
+Step 1: Install Dependencies
 npm install
-```
 
-### 2. MongoDB Setup
+Step 2: MongoDB Setup
+Option A — Local MongoDB
 
-Choose one option:
+Connection string:
 
-**Option A: Local MongoDB**
-- Install MongoDB locally
-- Default connection: `mongodb://localhost:27017/crowdconnect`
+mongodb://localhost:27017/crowdconnect
 
-**Option B: MongoDB Atlas (Cloud - Recommended)**
-- Create free account at https://www.mongodb.com/cloud/atlas
-- Create cluster and get connection string
-- See `MONGODB_SETUP.md` for detailed instructions
+Option B — MongoDB Atlas
 
-### 3. Configure Environment
+Create cluster
 
-Create a `.env` file in the project root with at least:
-```env
+Create DB user
+
+Whitelist your IP
+
+Get connection string
+
+Detailed guide in MONGODB_SETUP.md
+
+Step 3: Create Environment File
+
+Create .env:
+
 MONGODB_URI=mongodb://localhost:27017/crowdconnect
 PORT=3000
-JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
-```
+JWT_SECRET=your-very-secure-key
 
-### 4. Start Backend Server
-
-```bash
+Step 4: Start Backend
 npm start
-# OR for development with auto-reload:
+
+
+or for auto reload:
+
 npm run dev
-```
 
-Server will run on `http://localhost:${PORT}` (default `3000`).
 
-### 5. Configure Frontend
+Backend URL:
 
-By default, `config.js` uses a relative path so the frontend and backend can run on the same origin without CORS changes. Update only if your backend runs on a different host/port:
-```javascript
+http://localhost:3000
+
+Step 5: Frontend Configuration
+
+config.js uses same-origin setup by default:
+
 const API_CONFIG = {
-  // Served from same origin by default
   getApiBaseUrl: () => '/api',
 };
-```
 
-### 6. Open Frontend
 
-With the server running, open these routes in your browser:
+Update only if backend runs elsewhere.
 
-- Login page: `http://localhost:${PORT}/login`
-- Dashboard (requires auth): `http://localhost:${PORT}/dashboard`
+Step 6: Access the App
+Page	URL
+Login Page	/login
+Dashboard	/dashboard
 
-Useful query params on the login page:
+Useful parameters:
 
-- `?force=1` → show login even if a token exists
-- `?logout=1` → clear saved token, then show login
-- `?auth=1` → open login tab directly
-- `?signup=1` → open signup tab directly
+Parameter	Use
+?force=1	Force open login page
+?logout=1	Clear token
+?auth=1	Open login tab
+?signup=1	Open signup tab
 
-Notes:
+Navbar/footer never appear on login page.
 
-- The navbar/app shell never appears on the login page.
-- After successful login/signup, you’ll be redirected to `/dashboard`.
-
-### 7. (Optional) Seed Sample Data
-
-With the server running in a separate terminal, seed demo projects through the public API:
-```bash
+4. Seeding Data (Optional)
 npm run seed
-```
-Environment overrides (optional):
-```env
-# used by scripts/seed.js
+
+
+Environment overrides:
+
 API_BASE=http://localhost:3000/api
 SEED_NAME=Seed User
 SEED_EMAIL=seed@example.com
 SEED_PASSWORD=SeedPass123!
-```
 
-## 📡 API Endpoints
+5. API Endpoints
+Authentication
 
-### Authentication
-- `POST /api/auth/register` - Register new user
-- `POST /api/auth/login` - Login user
-- `GET /api/auth/me` - Get current user (requires auth)
+POST /api/auth/register
 
-### Projects
-- `GET /api/projects` - Get all projects
-- `GET /api/projects/:id` - Get single project
-- `POST /api/projects` - Create project (requires auth)
-- `GET /api/projects/user/:userId` - Get user's projects
-- `PUT /api/projects/:id` - Update project (requires auth)
+POST /api/auth/login
 
-### Contributions
-- `POST /api/contributions` - Create contribution (requires auth)
-- `GET /api/contributions/project/:projectId` - Get project contributions
-- `GET /api/contributions/user/:userId` - Get user contributions
+GET /api/auth/me
 
-### Leaderboards
-- `GET /api/leaderboard/contributions?limit=10` - Top contributors by count and total amount
-- `GET /api/leaderboard/publishes?limit=10` - Top publishers by number of projects
+Projects
 
-### Health
-- `GET /api/health` - API health check
+GET /api/projects
 
-## 🗄️ Database Schema
+GET /api/projects/:id
 
-### Users Collection
-```javascript
+POST /api/projects (auth required)
+
+GET /api/projects/user/:userId
+
+PUT /api/projects/:id (auth required)
+
+Contributions
+
+POST /api/contributions (auth required)
+
+GET /api/contributions/project/:projectId
+
+GET /api/contributions/user/:userId
+
+Leaderboards
+
+GET /api/leaderboard/contributions?limit=10
+
+GET /api/leaderboard/publishes?limit=10
+
+Misc
+
+GET /api/health
+
+6. Database Schema
+Users
 {
-  _id: ObjectId,
-  name: String,
-  email: String (unique),
-  password: String (hashed),
-  createdAt: Date
+  _id,
+  name,
+  email,
+  password,
+  createdAt
 }
-```
 
-### Projects Collection
-```javascript
+Projects
 {
-  _id: ObjectId,
-  title: String,
-  description: String,
-  targetFund: Number,
-  raised: Number,
-  motivation: String,
-  problemStatement: String,
-  solution: String,
-  thesis: String,
-  creatorId: ObjectId (references User),
-  creator: String,
-  image: String,
-  createdAt: Date
+  _id,
+  title,
+  description,
+  targetFund,
+  raised,
+  motivation,
+  problemStatement,
+  solution,
+  thesis,
+  creatorId,
+  creator,
+  image,
+  createdAt
 }
-```
 
-### Contributions Collection
-```javascript
+Contributions
 {
-  _id: ObjectId,
-  projectId: ObjectId (references Project),
-  contributorId: ObjectId (references User),
-  contributorName: String,
-  amount: Number,
-  createdAt: Date
+  _id,
+  projectId,
+  contributorId,
+  contributorName,
+  amount,
+  createdAt
 }
-```
 
-## 🔒 Security Features
+7. Security
 
-- Password hashing with bcrypt
-- JWT token authentication
-- CORS enabled for API
-- Input validation
-- Secure token storage (localStorage)
+Bcrypt password hashing
 
-## 🚧 Development
+JWT authentication
 
-### Running in Development Mode
-```bash
+CORS enabled
+
+Input validation
+
+Secure token storage
+
+8. Development Tips
+
+Start server with auto reload:
+
 npm run dev
-```
-Uses nodemon for auto-reload on file changes.
 
-### Testing API
-```bash
-# Health check
+
+Test API:
+
 curl http://localhost:3000/api/health
 
-# Register user
-curl -X POST http://localhost:3000/api/auth/register \
-  -H "Content-Type: application/json" \
-  -d '{"name":"Test","email":"test@example.com","password":"test123"}'
-```
+9. Deployment Guide
+Backend
 
-## 📝 Usage Flow
+Use MongoDB Atlas
 
-1. **Start Backend**
-   ```bash
-   npm start
-   ```
+Set strong JWT secret
 
-2. **Open Frontend**
-   - Open `index.html` in browser
-   - Or use a local server: `python -m http.server 8000`
+Deploy using Heroku / Railway / Render
 
-3. **Register/Login**
-   - Click "Get Started" or "Login"
-   - Create account or sign in
-   - Automatically redirected to dashboard
+Enable HTTPS
 
-4. **Publish Project**
-   - Click "Publish" in navbar
-   - Fill in all required fields
-   - Submit form
-   - See success screen with balloons
+Frontend
 
-5. **Donate**
-   - Click "Donate" in navbar
-   - Browse projects with summaries
-   - Click "Contribute Now"
-   - Enter amount and confirm
+Update API config for production
 
-## 🚀 Production Deployment
+Deploy using Netlify / Vercel / GitHub Pages
 
-1. **Backend:**
-   - Use MongoDB Atlas (cloud)
-   - Set strong `JWT_SECRET` in environment
-   - Deploy to Heroku, Railway, or similar
-   - Enable HTTPS
+10. License
 
-2. **Frontend:**
-   - Update `config.js` with production API URL
-   - Deploy to Netlify, Vercel, or similar
-   - Or serve static files from backend
+Open-source. Free to modify.
 
-3. **Security:**
-   - Change `JWT_SECRET` to random string
-   - Set proper CORS origins
-   - Use environment variables for all secrets
-   - Enable HTTPS
+11. Notes
 
-## 🤝 Contributing
-
-Feel free to fork, modify, and enhance this project!
-
-## 📄 License
-
-This project is open source and available for educational purposes.
-
----
-
-**Made with ❤️ for empowering innovation**
+This project is created for learning, academic submission, and practical demonstration of full-stack development.
