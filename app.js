@@ -19,10 +19,19 @@ class CrowdConnectApp {
       await authManager.init();
       authManager.onAuthStateChanged((user) => {
         this.currentUser = user;
+        const path = (typeof window !== 'undefined' && window.location && window.location.pathname) ? window.location.pathname : '/';
         if (user) {
+          if (path !== '/dashboard') {
+            window.location.replace('/dashboard');
+            return;
+          }
           this.showView('dashboard');
           this.loadProjects();
         } else {
+          if (path !== '/login') {
+            window.location.replace('/login');
+            return;
+          }
           this.showView('hero');
         }
       });
@@ -40,9 +49,41 @@ class CrowdConnectApp {
     } catch (_) { /* ignore */ }
 
     this.bindEvents();
-    this.showView('hero');
+    // Set initial view based on current page
+    try {
+      const path = window.location.pathname;
+      if (path === '/login') {
+        // Optional query controls: ?auth=1 (show login), ?signup=1 (show signup)
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('signup') === '1') {
+          this.setAuthMode('signup');
+          this.showView('auth');
+        } else if (params.get('auth') === '1') {
+          this.setAuthMode('login');
+          this.showView('auth');
+        } else {
+          this.showView('hero');
+        }
+      } else if (path === '/dashboard') {
+        this.showView('dashboard');
+      }
+    } catch (_) { /* ignore */ }
     this.applyTheme();
     this.refreshIcons();
+  }
+
+  hideNavAndFooter() {
+    const navbar = document.querySelector('#app-shell nav');
+    if (navbar) navbar.classList.add('hidden');
+    const footer = document.getElementById('footer');
+    if (footer) footer.classList.add('hidden');
+  }
+
+  showNavAndFooter() {
+    const navbar = document.querySelector('#app-shell nav');
+    if (navbar) navbar.classList.remove('hidden');
+    const footer = document.getElementById('footer');
+    if (footer) footer.classList.remove('hidden');
   }
 
   // View Management
@@ -65,14 +106,25 @@ class CrowdConnectApp {
     });
 
     // Show appropriate container
+    const appShell = document.getElementById('app-shell');
     if (!this.currentUser) {
       document.getElementById('view-hero')?.classList.toggle('hidden', view !== 'hero');
       document.getElementById('view-auth')?.classList.toggle('hidden', view !== 'auth');
-      document.getElementById('app-shell')?.classList.add('hidden');
+      if (appShell) {
+        appShell.classList.add('hidden');
+        appShell.style.display = 'none';
+      }
+      if (view === 'auth') {
+        this.hideNavAndFooter();
+      }
     } else {
       document.getElementById('view-hero')?.classList.add('hidden');
       document.getElementById('view-auth')?.classList.add('hidden');
-      document.getElementById('app-shell')?.classList.remove('hidden');
+      if (appShell) {
+        appShell.classList.remove('hidden');
+        appShell.style.display = '';
+      }
+      this.showNavAndFooter();
       
       // Show specific view
       if (views[view]) {
@@ -143,14 +195,6 @@ class CrowdConnectApp {
         await authManager.signIn(email, password);
       }
       // Auth state change will trigger view switch
-    } catch (error) {
-      this.showError(error.message);
-    }
-  }
-
-  async handleGoogleAuth() {
-    try {
-      await authManager.signInWithGoogle();
     } catch (error) {
       this.showError(error.message);
     }
@@ -282,14 +326,14 @@ class CrowdConnectApp {
       const card = document.createElement('div');
       card.className = 'card bg-gray-900 p-6 rounded-lg border border-gray-800 project-card';
       card.innerHTML = `
-        <div class="text-6xl mb-4 text-center">${project.image || '🚀'}</div>
+        <div class="text-6xl mb-4 text-center">${project.image || '✨'}</div>
         <h4 class="text-xl font-bold mb-2">${project.title}</h4>
         <p class="text-gray-400 mb-2 text-sm">by ${project.creator}</p>
         <p class="text-sm text-gray-500 mb-4">${project.description}</p>
         <div class="mb-4">
           <div class="flex justify-between text-sm mb-1">
-            <span>$${(project.raised || 0).toLocaleString()}</span>
-            <span>$${project.targetFund.toLocaleString()}</span>
+            <span>Rs ${(project.raised || 0).toLocaleString()}</span>
+            <span>Rs ${project.targetFund.toLocaleString()}</span>
           </div>
           <div class="w-full bg-gray-800 rounded-full h-2">
             <div class="bg-purple-600 h-2 rounded-full progress-bar" style="width:${pct}%"></div>
@@ -313,11 +357,11 @@ class CrowdConnectApp {
       const stat = el.getAttribute('data-stat');
       if (stat === 'total-raised') {
         if (totalRaised >= 1000000) {
-          el.textContent = `$${(totalRaised / 1000000).toFixed(2)}M`;
+          el.textContent = `Rs ${(totalRaised / 1000000).toFixed(2)}M`;
         } else if (totalRaised >= 1000) {
-          el.textContent = `$${(totalRaised / 1000).toFixed(1)}K`;
+          el.textContent = `Rs ${(totalRaised / 1000).toFixed(1)}K`;
         } else {
-          el.textContent = `$${totalRaised}`;
+          el.textContent = `Rs ${totalRaised}`;
         }
       }
       if (stat === 'active-projects') el.textContent = `${activeProjects}+`;
@@ -352,7 +396,7 @@ class CrowdConnectApp {
         contribList.innerHTML = '<li class="text-gray-500 text-sm">No contributions yet.</li>';
       } else {
         contribList.innerHTML = contributors
-          .map((c, i) => formatItem(i + 1, c.name, `${c.count} contributions`, c.totalAmount != null ? `(+$${c.totalAmount.toLocaleString()})` : ''))
+          .map((c, i) => formatItem(i + 1, c.name, `${c.count} contributions`, c.totalAmount != null ? `(+Rs ${c.totalAmount.toLocaleString()})` : ''))
           .join('');
       }
 
@@ -397,7 +441,7 @@ class CrowdConnectApp {
       const card = document.createElement('div');
       card.className = 'card bg-gray-900 p-6 rounded-lg border border-gray-800 project-card';
       card.innerHTML = `
-        <div class="text-6xl mb-4 text-center">${project.image || '🚀'}</div>
+        <div class="text-6xl mb-4 text-center">${project.image || '✨'}</div>
         <h3 class="text-2xl font-bold mb-2">${project.title}</h3>
         <p class="text-gray-400 mb-2 text-sm">Creator: ${project.creator}</p>
         <div class="mb-4 p-3 bg-gray-800 rounded">
@@ -405,8 +449,8 @@ class CrowdConnectApp {
         </div>
         <div class="mb-4">
           <div class="flex justify-between text-sm mb-1">
-            <span>$${(project.raised || 0).toLocaleString()} raised</span>
-            <span>Goal: $${project.targetFund.toLocaleString()}</span>
+            <span>Rs ${(project.raised || 0).toLocaleString()} raised</span>
+            <span>Goal: Rs ${project.targetFund.toLocaleString()}</span>
           </div>
           <div class="w-full bg-gray-800 rounded-full h-2">
             <div class="bg-purple-600 h-2 rounded-full progress-bar" style="width:${pct}%"></div>
@@ -441,8 +485,8 @@ class CrowdConnectApp {
         <h4 class="font-bold text-sm mb-1">${project.title}</h4>
         <p class="text-xs text-gray-400 line-clamp-2">${project.description}</p>
         <div class="mt-2 flex justify-between text-xs">
-          <span class="text-purple-400">$${(project.raised || 0).toLocaleString()}</span>
-          <span class="text-gray-500">of $${project.targetFund.toLocaleString()}</span>
+          <span class="text-purple-400">Rs ${(project.raised || 0).toLocaleString()}</span>
+          <span class="text-gray-500">of Rs ${project.targetFund.toLocaleString()}</span>
         </div>
       `;
       item.addEventListener('click', () => {
@@ -502,7 +546,7 @@ class CrowdConnectApp {
         <h3 class="text-2xl font-bold mb-4">Contribute to ${project.title}</h3>
         <p class="text-gray-400 mb-4">${project.description}</p>
         <div class="mb-4">
-          <label class="block text-sm mb-2">Amount ($)</label>
+          <label class="block text-sm mb-2">Amount (Rs)</label>
           <input type="number" id="contribution-amount" min="1" step="0.01" 
             class="w-full px-4 py-3 rounded bg-gray-800 border border-gray-700 focus:border-purple-500 focus:outline-none" 
             placeholder="Enter amount">
@@ -542,7 +586,7 @@ class CrowdConnectApp {
       <div class="text-center">
         <div class="text-6xl mb-4">🎉</div>
         <h2 class="text-4xl font-bold mb-4">Thank You!</h2>
-        <p class="text-xl text-purple-300 mb-6">You've contributed $${amount.toLocaleString()}</p>
+        <p class="text-xl text-purple-300 mb-6">You've contributed Rs ${amount.toLocaleString()}</p>
         <button onclick="this.closest('.success-screen').remove(); app.showView('dashboard');" 
           class="bg-purple-600 hover:bg-purple-700 text-white px-8 py-3 rounded-lg text-lg font-semibold transition-all">
           Go Back to Home
@@ -685,7 +729,6 @@ class CrowdConnectApp {
     document.getElementById('tab-login')?.addEventListener('click', () => this.setAuthMode('login'));
     document.getElementById('tab-signup')?.addEventListener('click', () => this.setAuthMode('signup'));
     document.getElementById('btn-auth')?.addEventListener('click', () => this.handleAuth());
-    document.getElementById('btn-google')?.addEventListener('click', () => this.handleGoogleAuth());
     document.getElementById('btn-back-home')?.addEventListener('click', () => this.showView('hero'));
 
     // Navigation

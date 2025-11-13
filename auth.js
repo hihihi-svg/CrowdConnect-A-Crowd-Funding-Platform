@@ -98,12 +98,6 @@ class AuthManager {
     }
   }
 
-  async signInWithGoogle() {
-    // Google OAuth would require additional setup
-    // For now, show a message
-    throw new Error('Google Sign-In requires additional OAuth setup. Please use email/password for now.');
-  }
-
   async getCurrentUser() {
     if (!this.authToken) {
       return null;
