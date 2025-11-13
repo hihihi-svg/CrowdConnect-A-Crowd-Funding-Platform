@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>CrowdConnect - Crowdfunding Platform</title>
+	<!-- Tailwind CSS CDN -->
+	<script src="https://cdn.tailwindcss.com"></script>
+	<!-- Lucide Icons -->
+	<script src="https://unpkg.com/lucide@latest"></script>
+	<!-- Custom Styles -->
+	<link rel="stylesheet" href="styles.css">
+</head>
+<body class="min-h-screen bg-black text-white theme-transition">
+	<!-- Global Theme Toggle -->
+	<div class="fixed top-4 right-4 z-50">
+		<button id="btn-theme-global" class="p-2 rounded bg-gray-900 border border-gray-800 hover:text-purple-400">
+			<span id="icon-sun-global" data-lucide="sun" width="20" height="20"></span>
+			<span id="icon-moon-global" data-lucide="moon" class="hidden" width="20" height="20"></span>
+		</button>
+	</div>
+	<!-- HERO VIEW -->
+	<div id="view-hero" class="min-h-screen theme-transition">
+		<div class="container mx-auto px-4 py-20">
+			<div class="text-center mb-16">
+				<h1 class="text-6xl font-bold mb-4 bg-gradient-to-r from-purple-400 to-purple-600 bg-clip-text text-transparent">
+					CrowdConnect
+				</h1>
+				<p class="text-2xl text-purple-300 mb-12">
+					Empowering Innovation, One Project at a Time.
+				</p>
+				<div class="flex gap-4 justify-center">
+					<button id="btn-get-started"
+						class="bg-purple-600 hover:bg-purple-700 text-white px-8 py-4 rounded-lg text-lg font-semibold transition-all transform hover:scale-105">
+						Get Started <span data-lucide="user-plus" class="inline ml-2 align-[-2px]"></span>
+					</button>
+					<button id="btn-login"
+						class="bg-purple-600 hover:bg-purple-700 text-white px-8 py-4 rounded-lg text-lg font-semibold transition-all transform hover:scale-105">
+						Login <span data-lucide="log-in" class="inline ml-2 align-[-2px]"></span>
+					</button>
+				</div>
+			</div>
+
+			<div class="grid md:grid-cols-3 gap-8 mt-20">
+				<div class="card bg-gray-900 p-6 rounded-lg border border-gray-800 text-center">
+					<div class="text-4xl mb-4">🚀</div>
+					<h3 class="text-xl font-bold mb-2 text-purple-400">Launch Projects</h3>
+					<p class="text-gray-400">Share your innovative ideas with the world</p>
+				</div>
+				<div class="card bg-gray-900 p-6 rounded-lg border border-gray-800 text-center">
+					<div class="text-4xl mb-4">💰</div>
+					<h3 class="text-xl font-bold mb-2 text-purple-400">Raise Funds</h3>
+					<p class="text-gray-400">Get support from a global community</p>
+				</div>
+				<div class="card bg-gray-900 p-6 rounded-lg border border-gray-800 text-center">
+					<div class="text-4xl mb-4">🤝</div>
+					<h3 class="text-xl font-bold mb-2 text-purple-400">Collaborate</h3>
+					<p class="text-gray-400">Connect with creators and supporters</p>
+				</div>
+			</div>
+
+			<div class="text-center mt-20 text-gray-500">
+				Made with <span data-lucide="heart" class="inline text-red-500 align-[-3px]" width="16" height="16"></span>
+			</div>
+		</div>
+	</div>
+
+	<!-- AUTH VIEW -->
+	<div id="view-auth" class="min-h-screen hidden theme-transition flex items-center justify-center">
+		<div class="card bg-gray-900 p-8 rounded-lg border border-gray-800 w-full max-w-md">
+			<h2 id="auth-title" class="text-3xl font-bold mb-6 text-center text-purple-400">
+				Welcome Back
+			</h2>
+			<div id="auth-error" class="hidden bg-red-900 text-red-200 p-3 rounded mb-4 text-sm"></div>
+			<div class="flex gap-2 mb-6">
+				<button id="tab-login"
+					class="flex-1 py-2 rounded bg-purple-600 text-white">
+					Login
+				</button>
+				<button id="tab-signup"
+					class="flex-1 py-2 rounded bg-gray-800 text-gray-400">
+					Sign Up
+				</button>
+			</div>
+			<div class="space-y-4">
+				<input id="input-name" type="text" placeholder="Full Name"
+					class="w-full px-4 py-3 rounded bg-gray-800 border border-gray-700 focus:border-purple-500 focus:outline-none hidden" />
+				<input id="input-email" type="email" placeholder="Email"
+					class="w-full px-4 py-3 rounded bg-gray-800 border border-gray-700 focus:border-purple-500 focus:outline-none" />
+				<input id="input-password" type="password" placeholder="Password"
+					class="w-full px-4 py-3 rounded bg-gray-800 border border-gray-700 focus:border-purple-500 focus:outline-none" />
+				<button id="btn-auth"
+					class="w-full bg-purple-600 hover:bg-purple-700 text-white py-3 rounded font-semibold transition-all">
+					Login
+				</button>
+			</div>
+			<div class="mt-4">
+				<button id="btn-google"
+					class="w-full bg-gray-800 hover:bg-gray-700 text-white py-3 rounded font-semibold transition-all border border-gray-700">
+					Continue with Google
+				</button>
+			</div>
+			<button id="btn-back-home"
+				class="w-full mt-4 text-gray-400 hover:text-purple-400 transition-colors">
+				← Back to Home
+			</button>
+		</div>
+	</div>
+
+	<!-- APP SHELL (visible when logged in) -->
+	<div id="app-shell" class="hidden theme-transition min-h-screen">
+		<!-- Navbar -->
+		<nav class="card bg-gray-900 border-b border-gray-800 sticky top-0 z-50">
+			<div class="container mx-auto px-4 py-4">
+				<div class="flex items-center justify-between">
+					<h1 class="text-2xl font-bold text-purple-400">CrowdConnect</h1>
+					<div class="flex items-center gap-6">
+						<button data-nav="dashboard" class="hover:text-purple-400 transition-colors flex items-center gap-2">
+							<span data-lucide="home" class="align-[-3px]" width="20" height="20"></span> Home
+						</button>
+						<button data-nav="publish" class="hover:text-purple-400 transition-colors flex items-center gap-2">
+							<span data-lucide="upload" class="align-[-3px]" width="20" height="20"></span> Publish
+						</button>
+						<button data-nav="donate" class="hover:text-purple-400 transition-colors flex items-center gap-2">
+							<span data-lucide="dollar-sign" class="align-[-3px]" width="20" height="20"></span> Donate
+						</button>
+						<button data-nav="projects" class="hover:text-purple-400 transition-colors flex items-center gap-2">
+							<span data-lucide="eye" class="align-[-3px]" width="20" height="20"></span> Projects
+						</button>
+						<button id="btn-theme" class="hover:text-purple-400 transition-colors">
+							<span id="icon-sun" data-lucide="sun" class="" width="20" height="20"></span>
+							<span id="icon-moon" data-lucide="moon" class="hidden" width="20" height="20"></span>
+						</button>
+						<button data-nav="profile" class="hover:text-purple-400 transition-colors">
+							<span data-lucide="user" class="" width="20" height="20"></span>
+						</button>
+					</div>
+				</div>
+			</div>
+		</nav>
+
+		<div class="container mx-auto px-4 py-8">
+			<!-- Dashboard -->
+			<div id="view-dashboard" class="space-y-12">
+				<!-- Home Section -->
+				<div class="text-center py-12">
+					<h2 class="text-4xl font-bold mb-4">Welcome to CrowdConnect</h2>
+					<p class="text-xl text-purple-300">Make a difference today</p>
+				</div>
+
+				<!-- About Section -->
+				<div class="card bg-gray-900 p-8 rounded-lg border border-gray-800 mb-8">
+					<h3 class="text-3xl font-bold mb-4 text-purple-400">About Us</h3>
+					<p class="text-gray-300 mb-4">
+						CrowdConnect is a modern crowdfunding platform that connects innovative projects with passionate supporters. 
+						We believe that great ideas deserve the opportunity to flourish, and we're here to make that happen.
+					</p>
+					<p class="text-gray-300">
+						Whether you're launching a startup, supporting a cause, or bringing a creative project to life, 
+						CrowdConnect provides the tools and community you need to succeed.
+					</p>
+				</div>
+
+				<!-- Mission Section -->
+				<div class="card bg-gray-900 p-8 rounded-lg border border-gray-800 mb-8">
+					<h3 class="text-3xl font-bold mb-4 text-purple-400">Our Mission</h3>
+					<p class="text-gray-300 mb-4">
+						Our mission is to democratize funding and empower individuals and organizations to turn their visions into reality. 
+						We combine finance and technology to help people collect funds easily, reaching a wide audience and enabling 
+						small contributions that make a big impact.
+					</p>
+					<div class="grid md:grid-cols-2 gap-4 mt-6">
+						<div>
+							<h4 class="font-bold text-purple-300 mb-2">Accessibility</h4>
+							<p class="text-gray-400 text-sm">Making funding accessible to everyone, regardless of traditional banking barriers.</p>
+						</div>
+						<div>
+							<h4 class="font-bold text-purple-300 mb-2">Innovation</h4>
+							<p class="text-gray-400 text-sm">Supporting innovative projects that solve real-world problems.</p>
+						</div>
+					</div>
+				</div>
+
+				<!-- Action Buttons -->
+				<div class="grid md:grid-cols-2 gap-6 mb-8">
+					<button data-nav="publish" class="card bg-gray-900 p-8 rounded-lg border border-gray-800 hover:border-purple-500 transition-all text-left">
+						<div class="text-4xl mb-4">🚀</div>
+						<h3 class="text-2xl font-bold mb-2 text-purple-400">Publish a Project</h3>
+						<p class="text-gray-400">Start your fundraising campaign and bring your idea to life</p>
+					</button>
+					<button data-nav="donate" class="card bg-gray-900 p-8 rounded-lg border border-gray-800 hover:border-purple-500 transition-all text-left">
+						<div class="text-4xl mb-4">💰</div>
+						<h3 class="text-2xl font-bold mb-2 text-purple-400">Support Projects</h3>
+						<p class="text-gray-400">Browse and contribute to innovative projects that inspire you</p>
+					</button>
+				</div>
+
+				<!-- Stats Banner -->
+				<div class="grid md:grid-cols-3 gap-6">
+					<div class="card bg-gray-900 p-6 rounded-lg border border-gray-800">
+						<span data-lucide="trending-up" class="text-purple-400 mb-2 block" width="32" height="32"></span>
+						<h3 class="text-2xl font-bold" data-stat="total-raised">$0</h3>
+						<p class="text-gray-400">Total Funds Raised</p>
+					</div>
+					<div class="card bg-gray-900 p-6 rounded-lg border border-gray-800">
+						<span data-lucide="target" class="text-purple-400 mb-2 block" width="32" height="32"></span>
+						<h3 class="text-2xl font-bold" data-stat="active-projects">0+</h3>
+						<p class="text-gray-400">Active Projects</p>
+					</div>
+					<div class="card bg-gray-900 p-6 rounded-lg border border-gray-800">
+						<span data-lucide="users" class="text-purple-400 mb-2 block" width="32" height="32"></span>
+						<h3 class="text-2xl font-bold">5,000+</h3>
+						<p class="text-gray-400">Community Members</p>
+					</div>
+				</div>
+
+				<div class="grid md:grid-cols-2 gap-6 mt-8">
+					<div class="card bg-gray-900 p-6 rounded-lg border border-gray-800">
+						<div class="flex items-center justify-between mb-4">
+							<h3 class="text-2xl font-bold">Top Contributors</h3>
+							<span data-lucide="trophy" class="text-purple-400" width="24" height="24"></span>
+						</div>
+						<ol id="leaderboard-contributors" class="space-y-3"></ol>
+					</div>
+					<div class="card bg-gray-900 p-6 rounded-lg border border-gray-800">
+						<div class="flex items-center justify-between mb-4">
+							<h3 class="text-2xl font-bold">Top Publishers</h3>
+							<span data-lucide="medal" class="text-purple-400" width="24" height="24"></span>
+						</div>
+						<ol id="leaderboard-publishers" class="space-y-3"></ol>
+					</div>
+				</div>
+
+				<!-- Featured Projects -->
+				<div>
+					<h3 class="text-2xl font-bold mb-6">Featured Projects</h3>
+					<div id="featured-projects" class="grid md:grid-cols-3 gap-6">
+						<!-- populated by JS -->
+					</div>
+				</div>
+			</div>
+
+			<!-- Publish Project Page -->
+			<div id="view-publish" class="hidden">
+				<div class="max-w-4xl mx-auto">
+					<h2 class="text-3xl font-bold mb-8 text-center">Publish Your Project</h2>
+					<div class="grid md:grid-cols-3 gap-8">
+						<!-- Main Form -->
+						<div class="md:col-span-2">
+							<div class="card bg-gray-900 p-8 rounded-lg border border-gray-800">
+								<div class="space-y-4">
+									<div>
+										<label class="block text-sm font-semibold mb-2">Project Title *</label>
+										<input id="publish-title" type="text" placeholder="Enter your project title"
+											class="w-full px-4 py-3 rounded bg-gray-800 border border-gray-700 focus:border-purple-500 focus:outline-none" />
+									</div>
+									<div>
+										<label class="block text-sm font-semibold mb-2">Project Description *</label>
+										<textarea id="publish-desc" placeholder="Describe your project in detail" rows="4"
+											class="w-full px-4 py-3 rounded bg-gray-800 border border-gray-700 focus:border-purple-500 focus:outline-none"></textarea>
+									</div>
+									<div>
+										<label class="block text-sm font-semibold mb-2">Target Fund Amount ($) *</label>
+										<input id="publish-target" type="number" placeholder="How much funding do you need?"
+											class="w-full px-4 py-3 rounded bg-gray-800 border border-gray-700 focus:border-purple-500 focus:outline-none" />
+									</div>
+									<div>
+										<label class="block text-sm font-semibold mb-2">Your Motivation *</label>
+										<textarea id="publish-motivation" placeholder="Why do you want to do this project? What drives you?" rows="3"
+											class="w-full px-4 py-3 rounded bg-gray-800 border border-gray-700 focus:border-purple-500 focus:outline-none"></textarea>
+									</div>
+									<div>
+										<label class="block text-sm font-semibold mb-2">Problem Statement *</label>
+										<textarea id="publish-problem" placeholder="What problem does your project solve?" rows="3"
+											class="w-full px-4 py-3 rounded bg-gray-800 border border-gray-700 focus:border-purple-500 focus:outline-none"></textarea>
+									</div>
+									<div>
+										<label class="block text-sm font-semibold mb-2">Solution & Approach *</label>
+										<textarea id="publish-solution" placeholder="How will your project solve the problem? What is your approach?" rows="4"
+											class="w-full px-4 py-3 rounded bg-gray-800 border border-gray-700 focus:border-purple-500 focus:outline-none"></textarea>
+									</div>
+									<div>
+										<label class="block text-sm font-semibold mb-2">Project Thesis (Optional)</label>
+										<textarea id="publish-thesis" placeholder="Your project idea thesis and vision" rows="3"
+											class="w-full px-4 py-3 rounded bg-gray-800 border border-gray-700 focus:border-purple-500 focus:outline-none"></textarea>
+									</div>
+									<div class="border-2 border-dashed border-gray-700 rounded-lg p-8 text-center">
+										<span data-lucide="upload" class="mx-auto mb-2 text-gray-400 block" width="32" height="32"></span>
+										<p class="text-gray-400">Upload Project Image/Video (Coming Soon)</p>
+									</div>
+									<button id="btn-publish"
+										class="w-full bg-purple-600 hover:bg-purple-700 text-white py-3 rounded font-semibold transition-all">
+										Publish Project
+									</button>
+								</div>
+							</div>
+						</div>
+						<!-- Other Projects Sidebar -->
+						<div class="md:col-span-1">
+							<div class="card bg-gray-900 p-6 rounded-lg border border-gray-800 sticky top-24">
+								<h3 class="text-xl font-bold mb-4 text-purple-400">Learn from Other Projects</h3>
+								<div id="other-projects-sidebar" class="space-y-4">
+									<!-- populated by JS -->
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Donate Page -->
+			<div id="view-donate" class="hidden">
+				<h2 class="text-3xl font-bold mb-8 text-center">Support a Project</h2>
+				<div id="donate-list" class="grid md:grid-cols-2 gap-6">
+					<!-- populated by JS -->
+				</div>
+			</div>
+
+			<!-- Projects Page -->
+			<div id="view-projects" class="hidden">
+				<h2 class="text-3xl font-bold mb-8 text-center">Explore Projects</h2>
+				<div id="projects-grid" class="grid md:grid-cols-3 gap-6">
+					<!-- populated by JS -->
+				</div>
+			</div>
+
+			<!-- Profile -->
+			<div id="view-profile" class="hidden">
+				<div class="max-w-4xl mx-auto">
+					<h2 class="text-3xl font-bold mb-8 text-center">Your Profile</h2>
+					<div class="card bg-gray-900 p-8 rounded-lg border border-gray-800 mb-6">
+						<div class="flex items-center gap-6 mb-6">
+							<div class="w-24 h-24 bg-purple-600 rounded-full flex items-center justify-center text-4xl">
+								👤
+							</div>
+							<div>
+								<h3 id="profile-name" class="text-2xl font-bold">User</h3>
+								<p id="profile-email" class="text-gray-400"></p>
+							</div>
+						</div>
+					</div>
+					<div class="grid md:grid-cols-3 gap-6 mb-6">
+						<div class="card bg-gray-900 p-6 rounded-lg border border-gray-800 text-center">
+							<h4 id="profile-projects-count" class="text-3xl font-bold text-purple-400">0</h4>
+							<p class="text-gray-400">Projects Created</p>
+						</div>
+						<div class="card bg-gray-900 p-6 rounded-lg border border-gray-800 text-center">
+							<h4 class="text-3xl font-bold text-purple-400">$0</h4>
+							<p class="text-gray-400">Funds Raised</p>
+						</div>
+						<div class="card bg-gray-900 p-6 rounded-lg border border-gray-800 text-center">
+							<h4 class="text-3xl font-bold text-purple-400">0</h4>
+							<p class="text-gray-400">Contributions Made</p>
+						</div>
+					</div>
+					<button id="btn-logout"
+						class="w-full bg-purple-600 hover:bg-purple-700 text-white py-3 rounded font-semibold transition-all">
+						Logout
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Scripts -->
+	<script src="config.js"></script>
+	<script src="database.js"></script>
+	<script src="api.js"></script>
+	<script src="auth.js"></script>
+	<script src="app.js"></script>
+</body>
+</html>
