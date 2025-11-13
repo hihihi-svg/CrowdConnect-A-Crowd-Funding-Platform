@@ -1,4 +1,4 @@
-# CrowdConnect - Crowdfunding Platform
+# CrowdConnect 3.0 - Crowdfunding Platform (MongoDB Edition)
 
 A modern, full-featured crowdfunding platform built with vanilla JavaScript, MongoDB, and Express.js backend.
 
@@ -6,7 +6,9 @@ A modern, full-featured crowdfunding platform built with vanilla JavaScript, Mon
 
 ```
 crowdconnect 3.0/
-├── index.html          # Main HTML file with all views
+├── login.html          # Public login/hero page (no navbar/app shell)
+├── dashboard.html      # Authenticated app shell (navbar + in-app views)
+├── index.html          # Legacy combined page (root now redirects to /login)
 ├── config.js           # API configuration (uses relative /api by default)
 ├── database.js         # Client-side API client
 ├── api.js              # Optional summarization utilities (Hugging Face fallback)
@@ -112,7 +114,7 @@ npm start
 npm run dev
 ```
 
-Server will run on `http://localhost:3000`
+Server will run on `http://localhost:${PORT}` (default `3000`).
 
 ### 5. Configure Frontend
 
@@ -126,7 +128,22 @@ const API_CONFIG = {
 
 ### 6. Open Frontend
 
-Simply open `index.html` in your web browser!
+With the server running, open these routes in your browser:
+
+- Login page: `http://localhost:${PORT}/login`
+- Dashboard (requires auth): `http://localhost:${PORT}/dashboard`
+
+Useful query params on the login page:
+
+- `?force=1` → show login even if a token exists
+- `?logout=1` → clear saved token, then show login
+- `?auth=1` → open login tab directly
+- `?signup=1` → open signup tab directly
+
+Notes:
+
+- The navbar/app shell never appears on the login page.
+- After successful login/signup, you’ll be redirected to `/dashboard`.
 
 ### 7. (Optional) Seed Sample Data
 
